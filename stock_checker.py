@@ -37,6 +37,8 @@ def send_email(subject, body):
         print(f"❌ Failed to send email: {e}")
 
 def check_stock_selenium():
+    print("⚠ Falling back to Selenium...")
+
     options = Options()
     options.add_argument("--headless")
     options.add_argument("--disable-blink-features=AutomationControlled")
@@ -45,22 +47,23 @@ def check_stock_selenium():
 
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        driver.set_page_load_timeout(20)
+        driver.set_page_load_timeout(20)  # ⏳ Prevents infinite hang on page load
         driver.get(PRODUCT_URL)
-        time.sleep(random.uniform(2, 5))
+        
+        time.sleep(random.uniform(3, 6))  # Mimic human browsing
 
-        stock_text = None
         try:
             stock_status = driver.find_element(By.CLASS_NAME, "inventoryCnt")
             stock_text = stock_status.text.strip().lower()
-            product_count = stock_text[0:3]
+            stock_count = stock_status[0:3]
         except:
             print("⚠ Stock status element not found in Selenium.")
+            stock_text = None
 
         driver.quit()
 
         if stock_text and "in stock" in stock_text:
-            send_email("MicroCenter Stock Alert", f"The product is in stock! Count: {product_count} Check: {PRODUCT_URL}")
+            send_email("Micro Center Stock Alert", f"The product is in stock! Count: {stock_count} Check: {PRODUCT_URL}")
             return True
 
     except Exception as e:
@@ -69,14 +72,15 @@ def check_stock_selenium():
     return False
 
 def run_stock_checker():
-    while True:
-        print("\n🔄 Checking stock...")
-        if(check_stock_selenium()):
-            break
+    check_stock_selenium()
+    # while True:
+    #     print("\n🔄 Checking stock...")
+    #     if(check_stock_selenium()):
+    #         break
 
-        sleep_time = random.randint(300, 600)  # Wait between 3 to 10 minutes
-        print(f"⏳ Sleeping for {sleep_time} seconds...\n")
-        time.sleep(sleep_time)
+    #     sleep_time = random.randint(300, 600)  # Wait between 3 to 10 minutes
+    #     print(f"⏳ Sleeping for {sleep_time} seconds...\n")
+    #     time.sleep(sleep_time)
 
 # Start the bot
 run_stock_checker()
