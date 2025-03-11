@@ -10,7 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-PRODUCT_URL = "https://www.microcenter.com/product/687907/amd-ryzen-7-9800x3d-granite-ridge-am5-470ghz-8-core-boxed-processor-heatsink-not-included"
+PRODUCT_URL = "https://www.microcenter.com/product/691100/asrock-amd-radeon-rx-9070-xt-steel-legend-triple-fan-16gb-gddr6-pcie-50-graphics-card?favID=691100"
 
 # Email credentials
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
