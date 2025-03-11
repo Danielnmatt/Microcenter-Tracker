@@ -37,8 +37,6 @@ def send_email(subject, body):
         print(f"❌ Failed to send email: {e}")
 
 def check_stock_selenium():
-    print("⚠ Falling back to Selenium...")
-
     options = Options()
     options.add_argument("--headless")
     options.add_argument("--disable-blink-features=AutomationControlled")
