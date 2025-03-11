@@ -45,6 +45,7 @@ def check_stock_selenium():
 
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver.set_page_load_timeout(20)
         driver.get(PRODUCT_URL)
         time.sleep(random.uniform(2, 5))
 
