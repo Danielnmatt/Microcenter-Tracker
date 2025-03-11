@@ -45,7 +45,7 @@ def check_stock_selenium():
 
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        driver.set_page_load_timeout(20)  # ⏳ Prevents infinite hang on page load
+        driver.set_page_load_timeout(20)  # Prevent infinite hangs
         driver.get(PRODUCT_URL)
         
         time.sleep(random.uniform(3, 6))  # Mimic human browsing
@@ -53,22 +53,34 @@ def check_stock_selenium():
         stock_text = None
         stock_count = None
         try:
-            stock_status = driver.find_element(By.CLASS_NAME, "inventoryCnt")
-            stock_text = stock_status.text.strip().lower()
-            stock_count = stock_text[0:3]
-        except:
-            print("⚠ Stock status element not found in Selenium.")
+            # First, check if any inventory container exists
+            inventory_div = driver.find_element(By.CLASS_NAME, "inventory")
+            
+            # Then, check for the actual stock count (inventoryCnt)
+            stock_status_elements = inventory_div.find_elements(By.CLASS_NAME, "inventoryCnt")
 
+            if stock_status_elements:
+                stock_text = stock_status_elements[0].text.strip().lower()
+                stock_count = stock_text[0:3]
+            else:
+                print("❌ Product is OUT OF STOCK (No inventoryCnt found).")
+        
+        except:
+            print("⚠ Inventory section not found at all. Assuming out of stock.")
+
+        driver.quit()
 
         if stock_text and "in stock" in stock_text:
             send_email("Micro Center Stock Alert", f"The product is in stock! Count: {stock_count} Check: {PRODUCT_URL}")
             return True
+        else:
+            print("❌ Not in stock yet (Selenium check).")
 
-        driver.quit()
     except Exception as e:
         print(f"❌ Selenium error: {e}")
 
     return False
+
 
 def run_stock_checker():
     check_stock_selenium()
