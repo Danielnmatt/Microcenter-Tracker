@@ -50,20 +50,21 @@ def check_stock_selenium():
         
         time.sleep(random.uniform(3, 6))  # Mimic human browsing
 
+        stock_text = None
+        stock_count = None
         try:
             stock_status = driver.find_element(By.CLASS_NAME, "inventoryCnt")
             stock_text = stock_status.text.strip().lower()
-            stock_count = stock_status[0:3]
+            stock_count = stock_text[0:3]
         except:
             print("⚠ Stock status element not found in Selenium.")
-            stock_text = None
 
-        driver.quit()
 
         if stock_text and "in stock" in stock_text:
             send_email("Micro Center Stock Alert", f"The product is in stock! Count: {stock_count} Check: {PRODUCT_URL}")
             return True
 
+        driver.quit()
     except Exception as e:
         print(f"❌ Selenium error: {e}")
 
